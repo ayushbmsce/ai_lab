@@ -1,0 +1,330 @@
+human_wins = 0
+computer_wins = 0
+draws = 0
+total_path_cost = 0
+
+
+def display_board(board):
+    print()
+    print(" " + " | ".join(board[0:3]))
+    print("---+---+---")
+    print(" " + " | ".join(board[3:6]))
+    print("---+---+---")
+    print(" " + " | ".join(board[6:9]))
+    print()
+
+
+def check_winner(board, player):
+    winning_combinations = [
+        (0, 1, 2),
+        (3, 4, 5),
+        (6, 7, 8),
+        (0, 3, 6),
+        (1, 4, 7),
+        (2, 5, 8),
+        (0, 4, 8),
+        (2, 4, 6)
+    ]
+
+    for a, b, c in winning_combinations:
+        if board[a] == player and board[b] == player and board[c] == player:
+            return True
+
+    return False
+
+
+def board_full(board):
+    return all(cell != " " for cell in board)
+
+
+def find_winning_move(board, player):
+    for i in range(9):
+        if board[i] == " ":
+            board[i] = player
+
+            if check_winner(board, player):
+                board[i] = " "
+                return i
+
+            board[i] = " "
+
+    return None
+
+
+def human_turn(board):
+    while True:
+        try:
+            position = int(input("Human (X), select an empty cell (1-9): "))
+
+            if position < 1 or position > 9:
+                print("Enter a number between 1 and 9.")
+                continue
+
+            index = position - 1
+
+            if board[index] != " ":
+                print("Cell already occupied.")
+                continue
+
+            board[index] = "X"
+            return
+
+        except ValueError:
+            print("Enter a valid number.")
+
+
+def computer_turn(board):
+    winning_move = find_winning_move(board, "O")
+
+    if winning_move is not None:
+        board[winning_move] = "O"
+        print("Computer selected cell", winning_move + 1)
+        return
+
+    blocking_move = find_winning_move(board, "X")
+
+    if blocking_move is not None:
+        board[blocking_move] = "O"
+        print("Computer selected cell", blocking_move + 1)
+        return
+
+    for i in range(9):
+        if board[i] == " ":
+            board[i] = "O"
+            print("Computer selected cell", i + 1)
+            return
+
+
+def display_statistics():
+    print("        GAME STATISTICS")
+    print("==============================")
+    print("Human Wins     :", human_wins)
+    print("Computer Wins  :", computer_wins)
+    print("Draws          :", draws)
+    print("Total Path Cost:", total_path_cost)
+
+
+    print("CHINMAYEE B R ")
+    print("1WA24CS097")
+
+
+def play_game():
+    global human_wins
+    global computer_wins
+    global draws
+    global total_path_cost
+
+    board = [
+        "O", " ", "X",
+        "X", " ", " ",
+        "X", "O", "O"
+    ]
+
+    path_cost = 0
+
+    print("\nInitial Board:")
+    display_board(board)
+
+    while True:
+        print("Human Turn (X)")
+        human_turn(board)
+        path_cost += 1
+
+        display_board(board)
+
+        if check_winner(board, "X"):
+            print("Human Wins!")
+            human_wins += 1
+            break
+
+        if board_full(board):
+            print("Draw!")
+            draws += 1
+            break
+
+        print("Computer Turn (O)")
+        computer_turn(board)
+        path_cost += 1
+
+        display_board(board)
+
+        if check_winner(board, "O"):
+            print("Computer Wins!")
+            computer_wins += 1
+            break
+
+        if board_full(board):
+            print("Draw!")
+            draws += 1
+            break
+
+    total_path_cost += path_cost
+
+    print("\nPath Cost:", path_cost)
+    display_statistics()
+
+
+def main():
+    while True:
+        play_game()
+
+        choice = input("\nPlay again? (y/n): ").lower()
+
+        if choice != "y":
+            print("\nFinal Statistics:")
+            display_statistics()
+            break
+
+
+if __name__ == "__main__":
+    main()
+     
+Initial Board:
+
+ O |   | X
+---+---+---
+ X |   |  
+---+---+---
+ X | O | O
+
+Human Turn (X)
+Human (X), select an empty cell (1-9): 2
+
+ O | X | X
+---+---+---
+ X |   |  
+---+---+---
+ X | O | O
+
+Computer Turn (O)
+Computer selected cell 5
+
+ O | X | X
+---+---+---
+ X | O |  
+---+---+---
+ X | O | O
+
+Computer Wins!
+
+Path Cost: 2
+        GAME STATISTICS
+==============================
+Human Wins     : 0
+Computer Wins  : 1
+Draws          : 0
+Total Path Cost: 2
+CHINMAYEE B R 
+1WA24CS097
+
+print("Name: CHINMAYEE B R \nUSN:1WA24CS097")
+def getAction(state):
+    Curr_State=state
+
+
+
+
+    if Curr_State[0]=='R' and Curr_State[1][1]==1:
+        return "SUCK"
+    elif Curr_State[0]=='L' and Curr_State[1][0]==1:
+         return "SUCK"
+    elif Curr_State[0]=='R' and Curr_State[1][1]==0:
+         return "MOVELEFT"
+    elif Curr_State[0]=='L' and Curr_State[1][0]==0:
+         return "MOVERIGHT"
+    else:
+       return None
+
+
+
+
+def updateState(state, action):
+    Curr_State=state
+
+
+    if Curr_State[0]=='R' and action=="SUCK":
+        Curr_State[1][1]=0
+    elif Curr_State[0]=='L' and action=="SUCK":
+        Curr_State[1][0]=0
+    elif Curr_State[0]=='R' and action=="MOVELEFT":
+        Curr_State[0]='L'
+    elif Curr_State[0]=='L' and action=="MOVERIGHT":
+        Curr_State[0]='R'
+
+
+    return Curr_State
+
+
+
+
+def bool_all_rooms_clean(state):
+
+
+    if state[1][0]==0 and state[1][1]==0:
+        return True
+    else:
+        return False
+
+
+
+
+def run_vacuum(start_state):
+    state = start_state
+    loop_count = 0
+
+
+    while not bool_all_rooms_clean(state):
+        action = getAction(state)
+        state = updateState(state, action)
+
+
+        print(f"cycle:{loop_count}\taction={action}\t\tstate={state}")
+        loop_count += 1
+
+
+        if loop_count > 20:
+            print(
+                "Uh oh ! Code stuck in a state ... program terminated")
+            return
+
+
+    print("All rooms clean!")
+    return
+
+
+
+
+def main():
+
+    start_state = ['R', [1, 1]]
+    print(f"\nPart1. Start in room R\nStart State: {start_state}")
+    run_vacuum(start_state)
+
+
+    start_state = ['L', [1, 1]]
+    print(f"\nPart2. Start in room L\nStart State: {start_state}")
+    run_vacuum(start_state)
+
+
+
+
+if __name__ == '__main__':
+    main()
+     
+Name: Ayush KC
+USN:1WA24CS073
+
+
+Part1. Start in room R
+Start State: ['R', [1, 1]]
+cycle:0	action=SUCK		state=['R', [1, 0]]
+cycle:1	action=MOVELEFT		state=['L', [1, 0]]
+cycle:2	action=SUCK		state=['L', [0, 0]]
+All rooms clean!
+
+Part2. Start in room L
+Start State: ['L', [1, 1]]
+cycle:0	action=SUCK		state=['L', [0, 1]]
+cycle:1	action=MOVERIGHT		state=['R', [0, 1]]
+cycle:2	action=SUCK		state=['R', [0, 0]]
+All rooms clean!
